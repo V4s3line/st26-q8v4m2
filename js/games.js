@@ -412,6 +412,19 @@ GAMES.runner = {
 // ======================================================================
 // 5. ЖИВОЙ УГОЛЬ: шашлык — переворачивать и снимать вовремя
 // ======================================================================
+// Текстура углей для мангала: рисуется один раз
+const COALS = (() => {
+  const c = document.createElement('canvas');
+  c.width = 280; c.height = 128;
+  const g = c.getContext('2d'), r = mulberry32(5);
+  for (let y = 0; y < c.height; y += 6) for (let x = 0; x < c.width; x += 6) {
+    const v = r();
+    g.fillStyle = v > 0.94 ? '#e86a20' : v > 0.75 ? '#7a2008' : v > 0.4 ? '#3a1408' : '#2a0e06';
+    g.fillRect(x, y, 5, 5);
+  }
+  return c;
+})();
+
 GAMES.grill = {
   verb: 'ЖАРЬ!', hint: 'тап по шампуру — перевернуть. Румяный — тап, снять',
   rules: ['Мясо жарится снизу', 'Тап по шампуру — перевернуть', 'Обе стороны румяные (мигает) — тап, снять', 'Чёрное — сгорело, не засчитается'],
@@ -479,11 +492,13 @@ GAMES.grill = {
         const top = ROW0 - 22, h = RH * 4 + 16;
         ctx.fillStyle = '#2a2a2a'; ctx.fillRect(MX - 8, top - 6, MW + 16, h + 12);
         ctx.fillStyle = '#3a3a3a'; ctx.fillRect(MX - 6, top - 4, MW + 12, 2);
-        for (let y = top; y < top + h; y += 6) for (let x = MX; x < MX + MW; x += 6) {
-          const fl = slots[clamp(Math.floor((y - ROW0 + RH / 2) / RH), 0, 3)].flare;
-          const v = Math.sin(x * 0.7 + y * 1.3 + t * (3 + fl * 4)) * 0.5 + 0.5;
-          ctx.fillStyle = v > 0.92 ? (fl ? '#ffe060' : '#ff8030') : v > 0.7 ? (fl ? '#e05010' : '#902808') : '#2e1008';
-          ctx.fillRect(x, y, 5, 5);
+        // угли — статичная текстура + медленное мягкое свечение (без мерцания)
+        ctx.drawImage(COALS, MX, top);
+        ctx.fillStyle = `rgba(255,110,30,${0.08 + 0.04 * Math.sin(t * 1.2)})`;
+        ctx.fillRect(MX, top, MW, h);
+        for (const s of slots) if (s.flare) {
+          ctx.fillStyle = `rgba(255,190,60,${0.22 + 0.06 * Math.sin(t * 2.5)})`;
+          ctx.fillRect(MX, ROW0 + s.i * RH - RH / 2, MW, RH);
         }
         // шампуры
         for (const s of slots) {
@@ -501,8 +516,8 @@ GAMES.grill = {
             ctx.fillStyle = color(k.d[k.down]); ctx.fillRect(cx, y + 3 + lift, 18, 5);
             if (c % 2) { ctx.fillStyle = '#f0e0c0'; ctx.fillRect(cx + 22, y - 4 + lift, 6, 8); }  // лук
           }
-          if (ready && Math.sin(t * 12) > 0) {
-            ctx.strokeStyle = '#80ff20'; ctx.lineWidth = 1;
+          if (ready) {
+            ctx.strokeStyle = '#80ff20'; ctx.lineWidth = 2;
             ctx.strokeRect(MX + 14, y - 11, MW - 24, 22);
             text('СНИМАЙ', MX + MW + 26, y - 3, { size: 6, color: '#80ff20', align: 'left' });
           }
@@ -700,7 +715,7 @@ GAMES.airport = {
         GATES.forEach((g, i) => {
           const hot = this.st === 'board' && i === this.gate;
           ctx.fillStyle = '#5a6068'; ctx.fillRect(g.x - 20, 150, 40, GROUND_Y - 150);
-          ctx.fillStyle = hot && Math.sin(t * 10) > 0 ? '#3ad040' : '#2a3038'; ctx.fillRect(g.x - 16, 154, 32, GROUND_Y - 154);
+          ctx.fillStyle = hot ? '#3ad040' : '#2a3038'; ctx.fillRect(g.x - 16, 154, 32, GROUND_Y - 154);
           panel(g.x - 24, 140, 48, 16);
           text(g.n, g.x, 145, { size: 6, color: hot ? '#80ff20' : '#ffdd55' });
           if (hot) text('V', g.x, 124 + Math.sin(t * 8) * 3, { size: 10, color: '#80ff20' });
