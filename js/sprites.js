@@ -125,18 +125,19 @@ const SPR = {
 };
 
 // ---------- авокадо (разрез с косточкой) ----------
+// плюшевое авокадо с мордочкой
 SPR.avocado = makeSprite([
   '...dd...',
   '..dlld..',
   '.dlyyld.',
-  '.dlyyld.',
-  'dlyyyyld',
+  '.dEyyEd.',
+  'dlpyypld',
   'dlyPPyld',
   'dlyPPyld',
   'dlyyyyld',
   '.dlllld.',
   '..dddd..',
-], { d: '#2f5a1c', l: '#7fb33a', y: '#d8e86a', P: '#7a4a22' });
+], { d: '#2f5a1c', l: '#7fb33a', y: '#d8e86a', P: '#7a4a22', E: '#1a1a1a', p: '#f0a0a0' });
 
 // ---------- девушки: та же схема скина, разные причёски и платья ----------
 function girlRows(frame) {

@@ -294,11 +294,11 @@ function FinalScene() {
       ctx.save(); ctx.translate(W / 2, 70); ctx.scale(s, s);
       text('СТЁПА!', 0, 0, { size: 28, color: '#ffdd55', shadowColor: '#3f3f00', baseline: 'middle' });
       ctx.restore();
-      const lines = wrap(FINAL_TEXT, 260, 8);
-      const ph = lines.length * 14 + 20;
-      panel(150, 100, 290, ph);
-      lines.forEach((l, i) => text(l, 164, 110 + i * 14, { size: 8, align: 'left' }));
-      text(`провалов: ${State.totalFails} · из жалости: ${State.pities}`, 295, 108 + ph, { size: 6, color: '#aab' });
+      const lines = wrap(FINAL_TEXT, 346, 8);
+      const ph = lines.length * 13 + 16;
+      panel(96, 92, 374, ph);
+      lines.forEach((l, i) => text(l, 110, 100 + i * 13, { size: 8, align: 'left' }));
+      text(`провалов: ${State.totalFails} · из жалости: ${State.pities}`, 283, 96 + ph, { size: 6, color: '#aab' });
       spr(SPR.stepa[0], 50, GROUND_Y - 66 - Math.abs(Math.sin(t * 5)) * 14, 2);
       // тост «Достижение получено»
       const tx = W - 166 + Math.max(0, 1 - (t - 1) * 3) * 180 + Math.max(0, (t - 6) * 3) * 180;
